@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f8f5ec">
+  <meta name="description" content="음악책 속 놀이터의 소리와 움직임을 내 목소리와 음악으로 표현하고 나만의 그림 악보를 만들어요.">
+  <title>소리랑 놀이터 · 놀이터 음악 탐험대</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div id="app"></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <dialog id="help-dialog" aria-labelledby="help-title">
+    <div class="dialog-top"><span class="eyebrow">선생님과 함께 읽어요</span><button class="icon-btn" data-action="close-help" aria-label="사용 안내 닫기">×</button></div>
+    <h2 id="help-title">소리로 만드는 작은 놀이터</h2>
+    <ol class="help-list">
+      <li><b>소리 찾기</b><span>놀이기구를 고르고 움직임을 목소리로 흉내 내요. 소리말을 쓰고, 원하면 6초 이내로 녹음해요.</span></li>
+      <li><b>악보 만들기</b><span>놀이기구를 골라 네 칸에 담아요. 선과 점으로 소리를 그려요. 높은 선은 높은 소리, 아래 선은 낮은 소리가 돼요.</span></li>
+      <li><b>내 작품 발표</b><span>왼쪽부터 연주하며 목소리와 몸짓으로 표현해요. 이름이 담긴 그림 악보(PNG)와 연주(WAV)를 저장하고 친구에게 소개해요.</span></li>
+    </ol>
+    <div class="note"><b>태블릿 한 대로 나만의 작품을 만들어요.</b><p>‘내 이름’을 적고 혼자 소리·녹음·그림 악보·소감을 만들어요. 같은 주소로 들어와도 친구의 작품과 섞이지 않아요. 작품은 지금 사용하는 브라우저에 저장돼요. 다른 기기로 옮기거나 기기를 함께 쓸 때는 ‘작품 파일’을 저장해요.</p></div>
+    <div class="note subtle"><b>마이크가 없어도 활동할 수 있어요.</b><p>마이크 권한은 녹음할 때만 요청해요. HTTPS 주소에서 Chrome 또는 Samsung Internet을 권장해요. 소리가 안 들리면 태블릿의 미디어 음량을 확인해요.</p></div>
+    <div class="help-actions"><button class="btn secondary" data-action="export-project">작품 파일 저장</button><button class="btn secondary" data-action="import-project">작품 파일 열기</button><button class="btn ghost danger" data-action="reset">새 작품 시작</button></div>
+  </dialog>
+  <dialog id="scene-dialog" class="scene-dialog" aria-labelledby="scene-dialog-title">
+    <div class="dialog-top"><h2 id="scene-dialog-title">놀이터에서 표현할 소리를 골라요</h2><button class="icon-btn" data-action="close-scene" aria-label="놀이터 그림 닫기">×</button></div>
+    <div id="scene-dialog-body"></div>
+  </dialog>
+  <input id="import-file" type="file" accept="application/json,.json" hidden>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
