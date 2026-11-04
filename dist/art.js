@@ -1,3 +1,4 @@
+import {STICKERS} from './icons.js';
 export const SCENE = {src:'./assets/playground.png',width:1672,height:941};
 export const TOYS = [
   {id:'slide',name:'미끄럼틀',color:'#d28650',light:'#fbebd9',word:'슈우우웅',shape:'down',question:'위에서 아래로 쭉! 미끄러지는 움직임을 내 목소리로 표현해요.',type:'sine',zone:[2,13,29,45],crop:[.005,.115,.32,.485]},
@@ -13,15 +14,7 @@ export function toyArt(id,cls='toy-art'){
   return `<svg class="${cls}" viewBox="${box.join(' ')}" preserveAspectRatio="xMidYMid meet" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><image href="${SCENE.src}" width="${SCENE.width}" height="${SCENE.height}"/></svg>`;
 }
 
-export const ICONS={
-play:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m8 5 11 7-11 7Z" fill="currentColor"/></svg>',
-stop:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>',
-mic:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3" stroke="currentColor" stroke-width="2"/><path d="M6 11v2a6 6 0 0 0 12 0v-2m-6 8v3m-3 0h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
-music:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 17V5l10-2v12M10 9l10-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><ellipse cx="6.5" cy="18" rx="3.5" ry="2.5" fill="currentColor"/><ellipse cx="16.5" cy="16" rx="3.5" ry="2.5" fill="currentColor"/></svg>',
-download:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v5h14v-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-expand:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-arrow:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
-};
+export const ICONS=STICKERS;
 
 export function defaultStrokes(shape){
   if(shape==='up')return [[{x:.08,y:.83},{x:.92,y:.17}]];
