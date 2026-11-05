@@ -25,7 +25,7 @@ export function musicEvents(settings,strokes,duration){
     if(!line.length)continue;const points=[...line].sort((a,b)=>a.x-b.x),part=duration/repeats*active,base=rep*duration/repeats;
     const x0=Math.max(0,Math.min(.98,points[0].x)),x1=Math.max(x0+.025,Math.min(1,points.at(-1).x)),start=base+x0*part,end=Math.min(duration,base+x1*part),span=Math.max(.06,end-start);
     if(!pitched){const count=Math.min(16,Math.max(1,Math.ceil(span/.23)));for(let j=0;j<count;j++)events.push({at:start+j*span/count,duration:Math.min(.16,span/count),midi:null});continue;}
-    if(tone.pitchMode==='fixed'||points.length===1){events.push({at:start,duration:span,midi:midiAt(tone)});continue;}
+    if(tone.pitchMode==='fixed'||points.length===1){events.push({at:start,duration:span,midi:midiAt(tone,points[0].y)});continue;}
     const count=Math.min(48,Math.max(2,Math.ceil(span/.07))),reduced=[];let cursor=0;
     for(let k=0;k<=count;k++){const x=x0+(x1-x0)*k/count;while(cursor<points.length-2&&points[cursor+1].x<x)cursor++;const a=points[cursor],b=points[Math.min(cursor+1,points.length-1)],mix=b.x>a.x?Math.max(0,Math.min(1,(x-a.x)/(b.x-a.x))):0;reduced.push({x,y:a.y+(b.y-a.y)*mix});}
     let current={at:start,midi:midiAt(tone,points[0].y)};

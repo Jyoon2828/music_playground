@@ -24,3 +24,5 @@ export function defaultStrokes(shape){
   return [Array.from({length:41},(_,i)=>({x:.06+i/40*.88,y:.5+Math.cos(i/40*Math.PI*4)*.32}))];
 }
 export function graphSVG(strokes,color,cls=''){return `<svg class="${cls}" viewBox="0 0 300 120" preserveAspectRatio="none" aria-hidden="true">${strokes.map(s=>s.length===1?`<circle cx="${s[0].x*300}" cy="${s[0].y*120}" r="4" fill="${color}"/>`:`<polyline points="${s.map(p=>`${p.x*300},${p.y*120}`).join(' ')}" fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>`).join('')}</svg>`;}
+
+export function soundStrokes(sound){return Array.isArray(sound.strokes)?sound.strokes.map(line=>line.map(p=>({...p}))):defaultStrokes(sound.shape);}

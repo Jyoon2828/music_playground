@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {freshProject,validateProject,dataURLToClip} from '../dist/storage.js';
 import {defaultTone,normalizeTone,frequencyAt,musicEvents} from '../dist/music.js';
+import {soundStrokes} from '../dist/art.js';
 import {wavBlob,sceneDuration} from '../dist/audio.js';
 
 test('손으로 그린 악보, 소리말, 의도한 쉼이 저장 후 그대로 복원된다',()=>{
@@ -38,4 +39,24 @@ test('타악기는 음정 대신 리듬을 만들고 빈 그림 악보는 소리
   for(const instrument of ['maracas','drum']){const events=musicEvents({tone:{instrument},shape:'flat',speed:'normal'},undefined,3);assert.ok(events.length>2);assert.ok(events.every(e=>e.midi===null));}
   assert.deepEqual(musicEvents({tone:defaultTone(),shape:'flat',speed:'normal'},[],3),[]);
   assert.deepEqual(normalizeTone({instrument:'unknown',note:'H',octave:100,pitchMode:'bad'}),defaultTone());
+});
+
+
+test('소리 찾기에서 직접 그린 선과 점은 다시 열어도 남고 악보에 독립적으로 복사된다',()=>{
+  const p=freshProject();p.sounds.slide.strokes=[[{x:.1,y:.8},{x:.7,y:.2}],[{x:.8,y:.5}]];p.sounds.tubes.strokes=[];
+  const restored=validateProject(JSON.parse(JSON.stringify(p)));assert.deepEqual(restored,p);
+  const sceneStrokes=soundStrokes(restored.sounds.slide);sceneStrokes[0][0].y=.1;
+  assert.equal(restored.sounds.slide.strokes[0][0].y,.8);assert.deepEqual(soundStrokes(restored.sounds.tubes),[]);
+  const events=musicEvents(restored.sounds.slide,restored.sounds.slide.strokes,3);assert.ok(events.length>1);assert.ok(events.some(e=>e.midi>events[0].midi));
+});
+test('그린 움직임의 잘못된 좌표를 검증하고 이전 작품의 기본 모양도 복원한다',()=>{
+  const p=freshProject();p.sounds.slide.strokes=[[{x:-1,y:2},null,{x:NaN,y:.4}]];
+  const r=validateProject(p);assert.deepEqual(r.sounds.slide.strokes,[[{x:0,y:1}]]);
+  assert.equal(r.sounds.spinner.strokes,undefined);assert.ok(soundStrokes(r.sounds.spinner).length>0);
+});
+
+test('콕 찍은 점도 그린 높이에 따라 음정이 바뀐다',()=>{
+  const settings={tone:{...defaultTone(),pitchMode:'follow'},speed:'normal'};
+  const high=musicEvents(settings,[[{x:.4,y:.1}]],3),low=musicEvents(settings,[[{x:.4,y:.9}]],3);
+  assert.ok(high[0].midi>low[0].midi);assert.ok(high[0].duration>0);
 });

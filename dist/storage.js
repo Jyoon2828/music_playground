@@ -1,17 +1,17 @@
-import {TOYS,defaultStrokes} from './art.js';
+import {TOYS,soundStrokes} from './art.js';
 import {defaultTone,normalizeTone} from './music.js';
 export const KEY='sorirang-playground-v3';
 export function freshProject(){return {version:3,title:'나의 소리 놀이터',studentName:'',tempo:84,reflection:'',sounds:Object.fromEntries(TOYS.map(t=>[t.id,{word:t.word,shape:t.shape,speed:'normal',volume:'normal',tone:defaultTone()}])),slots:[null,null,null,null]};}
 const text=(v,n,f='')=>typeof v==='string'?v.slice(0,n):f;
+const cleanStrokes=value=>value.slice(0,12).map(line=>Array.isArray(line)?line.slice(0,180).filter(q=>q&&Number.isFinite(q.x)&&Number.isFinite(q.y)).map(q=>({x:Math.max(0,Math.min(1,q.x)),y:Math.max(0,Math.min(1,q.y))})):[]).filter(line=>line.length);
 export function validateProject(raw){
   if(!raw||![1,2,3].includes(raw.version)||!Array.isArray(raw.slots)||raw.slots.length!==4)throw new Error('소리랑 놀이터에서 저장한 작품 파일을 선택해 주세요.');
   const p=freshProject();
   p.title=raw.title==='우리 모둠의 소리 놀이터'?p.title:text(raw.title,40,p.title);p.studentName=text(raw.studentName,24);p.reflection=text(raw.reflection,200);p.tempo=Math.max(52,Math.min(120,Number(raw.tempo)||84));
-  for(const t of TOYS){const s=raw.sounds?.[t.id];if(!s)continue;p.sounds[t.id]={word:text(s.word,48,t.word),shape:['up','down','wave','dots','flat'].includes(s.shape)?s.shape:t.shape,speed:['slow','normal','fast'].includes(s.speed)?s.speed:'normal',volume:['soft','normal','loud'].includes(s.volume)?s.volume:'normal',tone:normalizeTone(s.tone)};}
+  for(const t of TOYS){const s=raw.sounds?.[t.id];if(!s)continue;p.sounds[t.id]={word:text(s.word,48,t.word),shape:['up','down','wave','dots','flat'].includes(s.shape)?s.shape:t.shape,speed:['slow','normal','fast'].includes(s.speed)?s.speed:'normal',volume:['soft','normal','loud'].includes(s.volume)?s.volume:'normal',tone:normalizeTone(s.tone),...(Array.isArray(s.strokes)?{strokes:cleanStrokes(s.strokes)}:{})};}
   p.slots=raw.slots.map(s=>{
     if(!s||!TOYS.some(t=>t.id===s.toyId))return null;
-    let strokes=Array.isArray(s.strokes)?s.strokes.slice(0,12).map(line=>Array.isArray(line)?line.slice(0,180).filter(q=>q&&Number.isFinite(q.x)&&Number.isFinite(q.y)).map(q=>({x:Math.max(0,Math.min(1,q.x)),y:Math.max(0,Math.min(1,q.y))})):[]).filter(l=>l.length):[];
-    if(!Array.isArray(s.strokes))strokes=defaultStrokes(p.sounds[s.toyId].shape);
+    const strokes=Array.isArray(s.strokes)?cleanStrokes(s.strokes):soundStrokes(p.sounds[s.toyId]);
     return {toyId:s.toyId,mode:s.mode==='voice'?'voice':'music',word:text(s.word,48,p.sounds[s.toyId].word),strokes,tone:normalizeTone(s.tone??p.sounds[s.toyId].tone)};
   });
   return p;

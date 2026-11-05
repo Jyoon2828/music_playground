@@ -17,7 +17,7 @@
     <div class="dialog-top"><span class="eyebrow">선생님과 함께 읽어요</span><button class="icon-btn" data-action="close-help" aria-label="사용 안내 닫기">×</button></div>
     <h2 id="help-title">소리로 만드는 작은 놀이터</h2>
     <ol class="help-list">
-      <li><b>소리 찾기</b><span>놀이기구를 고르고 움직임을 목소리로 흉내 내요. 소리말을 쓰고, ‘악기·음정’에서 악기를 골라요. 원하면 6초 이내로 녹음해요.</span></li>
+      <li><b>소리 찾기</b><span>놀이기구를 고르고 움직임을 목소리로 흉내 내요. 소리말을 쓰고, ‘직접 그리기’에서 소리의 움직임을 그려요. ‘그린 소리 듣기’로 확인한 뒤 ‘이 그림으로 담기’를 눌러요. ‘악기·음정’에서 악기도 고를 수 있어요. 원하면 6초 이내로 녹음해요.</span></li>
       <li><b>악보 만들기</b><span>놀이기구를 골라 네 칸에 담아요. 선과 점으로 소리를 그려요. 장면마다 ‘악기·음정’을 고를 수 있어요. ‘그림선 따라’는 선의 높낮이대로, ‘한 음으로’는 고른 음으로 연주해요.</span></li>
       <li><b>내 작품 발표</b><span>왼쪽부터 연주하며 목소리와 몸짓으로 표현해요. ‘그림+연주 동영상’으로 악보와 소리를 함께 저장해요. 그림 악보(PNG)와 연주(WAV)도 따로 저장할 수 있어요.</span></li>
     </ol>
@@ -34,6 +34,17 @@
     <h2 id="tone-title">악기와 음정을 골라요</h2>
     <div id="tone-editor"></div>
     <div class="tone-actions"><button class="btn secondary" data-action="preview-tone">선택한 소리 듣기</button><button class="btn primary" data-action="apply-tone">이 소리로 정하기</button></div>
+  </dialog>
+  <dialog id="movement-dialog" class="movement-dialog" aria-labelledby="movement-title">
+    <div class="dialog-top"><span class="eyebrow">손가락 · 펜 · 마우스로 자유롭게</span><button class="icon-btn" data-action="close-movement" aria-label="그리기 창 닫기">×</button></div>
+    <h2 id="movement-title">소리의 움직임 그리기</h2>
+    <p id="movement-help" class="movement-help"></p>
+    <div class="movement-toolbar"><span id="movement-tone"></span><div><button class="btn secondary" data-action="movement-undo">한 선 취소</button><button class="btn secondary" data-action="movement-clear">모두 지우기</button></div></div>
+    <div id="movement-axis" class="drawing-wrap movement-board"><canvas id="movement-canvas" width="1200" height="480" aria-label="소리의 움직임 직접 그리기"></canvas><span id="movement-empty" class="movement-empty" aria-hidden="true">여기에 소리의 움직임을 그려요</span></div>
+    <div class="movement-direction"><span>시작 → 왼쪽에서 오른쪽으로 → 끝</span><span id="movement-count"></span></div>
+    <details class="movement-examples"><summary>이런 모양으로 시작해도 좋아요</summary><div id="movement-presets"></div></details>
+    <div class="movement-actions"><button class="btn secondary" data-action="preview-movement">그린 소리 듣기</button><button class="btn primary" data-action="apply-movement">이 그림으로 담기</button></div>
+    <p id="movement-save-note" class="movement-save-note">‘이 그림으로 담기’를 누르면 저장돼요. 새로 악보에 담을 때도 이 움직임이 들어가요.</p>
   </dialog>
   <dialog id="video-dialog" class="video-dialog" aria-labelledby="video-title">
     <div class="dialog-top"><h2 id="video-title">그림과 소리가 만나는 내 음악 영상</h2><button class="icon-btn" data-action="close-video" aria-label="동영상 창 닫기">×</button></div>
