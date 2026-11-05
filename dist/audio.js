@@ -27,14 +27,25 @@ function partial(ctx,out,hz,ratio,weight,decay,start,duration,volume,track,type=
   else{gain.gain.exponentialRampToValueAtTime(Math.max(.00001,peak*Math.exp(-Math.max(.01,life-.02)/decay)),start+life-.012);gain.gain.linearRampToValueAtTime(0,start+life);}
   osc.connect(gain);gain.connect(out);osc.start(start);osc.stop(start+life+.005);releaseNode(osc,gain,track);
 }
+// Sustained bowed-string tone, with a gentle attack and light vibrato.
+function violin(ctx,out,hz,start,duration,volume,track){
+  const osc=ctx.createOscillator(),filter=ctx.createBiquadFilter(),gain=ctx.createGain(),vibrato=ctx.createOscillator(),depth=ctx.createGain();
+  const life=Math.max(.11,duration+.04),attack=Math.min(.065,life*.25),release=Math.min(.065,life*.3),peak=volume*.82;
+  osc.type='sawtooth';osc.frequency.setValueAtTime(hz,start);filter.type='lowpass';filter.frequency.setValueAtTime(Math.min(ctx.sampleRate*.45,4800,hz*7),start);filter.Q.value=.55;
+  vibrato.frequency.value=5.2;depth.gain.setValueAtTime(0,start);depth.gain.linearRampToValueAtTime(hz*.0035,start+Math.min(.18,life*.6));vibrato.connect(depth);depth.connect(osc.frequency);
+  gain.gain.setValueAtTime(0,start);gain.gain.linearRampToValueAtTime(peak,start+attack);gain.gain.setValueAtTime(peak,start+life-release);gain.gain.linearRampToValueAtTime(0,start+life);
+  osc.connect(filter);filter.connect(gain);gain.connect(out);osc.start(start);vibrato.start(start);osc.stop(start+life+.005);vibrato.stop(start+life+.01);
+  releaseNode(osc,gain,track,filter);if(track)liveNodes.push(vibrato);vibrato.onended=()=>{vibrato.disconnect();depth.disconnect();};
+}
 function percussion(ctx,out,instrument,start,duration,volume,track){
+  if(instrument==='tambourine')for(const [ratio,weight,decay]of [[1,.38,.065],[1.44,.28,.075],[2,.2,.09],[2.63,.14,.11]])partial(ctx,out,2800,ratio,weight,decay,start,.16,volume*.95,track);
   if(instrument==='drum'){
     const osc=ctx.createOscillator(),gain=ctx.createGain(),life=.19;osc.type='sine';osc.frequency.setValueAtTime(155,start);osc.frequency.exponentialRampToValueAtTime(58,start+.14);
     gain.gain.setValueAtTime(0,start);gain.gain.linearRampToValueAtTime(volume*1.3,start+.004);gain.gain.exponentialRampToValueAtTime(.0001,start+life);osc.connect(gain);gain.connect(out);osc.start(start);osc.stop(start+life+.01);releaseNode(osc,gain,track);
   }
-  const source=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain(),life=instrument==='maracas'?.125:.055;
-  source.buffer=noiseBuffer(ctx);filter.type=instrument==='maracas'?'highpass':'lowpass';filter.frequency.value=instrument==='maracas'?3300:1900;filter.Q.value=.65;
-  gain.gain.setValueAtTime(0,start);gain.gain.linearRampToValueAtTime(volume*(instrument==='maracas'?1.4:.32),start+.007);gain.gain.exponentialRampToValueAtTime(.0001,start+life);
+  const source=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain(),life=instrument==='tambourine'?.18:instrument==='maracas'?.125:.055;
+  source.buffer=noiseBuffer(ctx);filter.type=instrument==='drum'?'lowpass':'highpass';filter.frequency.value=instrument==='maracas'?3300:instrument==='tambourine'?1800:1900;filter.Q.value=.65;
+  gain.gain.setValueAtTime(0,start);gain.gain.linearRampToValueAtTime(volume*(instrument==='maracas'?1.4:instrument==='tambourine'?.9:.32),start+.007);gain.gain.exponentialRampToValueAtTime(.0001,start+life);
   source.connect(filter);filter.connect(gain);gain.connect(out);source.start(start);source.stop(start+life+.01);releaseNode(source,gain,track,filter);
 }
 function scheduleMusic(ctx,out,settings,strokes,start,duration,track){
@@ -42,7 +53,8 @@ function scheduleMusic(ctx,out,settings,strokes,start,duration,track){
   for(const e of events){const at=start+e.at;
     if(e.midi===null){percussion(ctx,out,tone.instrument,at,e.duration,volume,track);continue;}
     const hz=440*2**((e.midi-69)/12);
-    if(tone.instrument==='electronic'){partial(ctx,out,hz,1,.76,1,at,e.duration,volume,track,'triangle',true);partial(ctx,out,hz,2,.24,1,at,e.duration,volume,track,'sine',true);}
+    if(tone.instrument==='violin'){violin(ctx,out,hz,at,e.duration,volume,track);}
+    else if(tone.instrument==='electronic'){partial(ctx,out,hz,1,.76,1,at,e.duration,volume,track,'triangle',true);partial(ctx,out,hz,2,.24,1,at,e.duration,volume,track,'sine',true);}
     else if(tone.instrument==='xylophone')for(const [ratio,weight,decay]of [[1,.77,.19],[3.98,.17,.09],[9.17,.06,.045]])partial(ctx,out,hz,ratio,weight,decay,at,e.duration,volume*1.3,track);
     else if(tone.instrument==='bell')for(const [ratio,weight,decay]of [[1,.69,.95],[2.76,.22,.55],[5.4,.09,.25]])partial(ctx,out,hz,ratio,weight,decay,at,e.duration,volume,track);
     else for(const [ratio,weight,decay]of [[1,.65,.78],[2,.23,.47],[3,.09,.28],[4,.03,.18]])partial(ctx,out,hz,ratio,weight,decay,at,e.duration,volume*1.18,track);

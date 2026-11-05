@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {freshProject,validateProject,dataURLToClip} from '../dist/storage.js';
-import {defaultTone,normalizeTone,frequencyAt,musicEvents} from '../dist/music.js';
+import {INSTRUMENTS,defaultTone,normalizeTone,isPitched,frequencyAt,musicEvents} from '../dist/music.js';
 import {soundStrokes} from '../dist/art.js';
 import {wavBlob,sceneDuration} from '../dist/audio.js';
 
@@ -59,4 +59,20 @@ test('콕 찍은 점도 그린 높이에 따라 음정이 바뀐다',()=>{
   const settings={tone:{...defaultTone(),pitchMode:'follow'},speed:'normal'};
   const high=musicEvents(settings,[[{x:.4,y:.1}]],3),low=musicEvents(settings,[[{x:.4,y:.9}]],3);
   assert.ok(high[0].midi>low[0].midi);assert.ok(high[0].duration>0);
+});
+
+test('바이올린과 탬버린은 장면별로 저장되며 음정 악기와 리듬 악기로 연주된다',()=>{
+  assert.equal(INSTRUMENTS.length,8);
+  const p=freshProject();
+  for(const [i,instrument] of ['violin','tambourine'].entries()){
+    const tone={instrument,note:'G',octave:5,pitchMode:'follow'};
+    p.sounds[['slide','tubes'][i]].tone=tone;
+    p.slots[i]={toyId:'slide',mode:'music',word:'새 악기',tone,strokes:[[{x:.1,y:.8},{x:.9,y:.2}]]};
+  }
+  assert.deepEqual(validateProject(JSON.parse(JSON.stringify(p))),p);
+  assert.equal(isPitched(p.slots[0].tone),true);assert.equal(isPitched(p.slots[1].tone),false);
+  const violinNotes=musicEvents({tone:p.slots[0].tone,speed:'normal'},p.slots[0].strokes,3);
+  assert.ok(violinNotes.at(-1).midi>violinNotes[0].midi);
+  const rhythm=musicEvents({tone:p.slots[1].tone,speed:'normal'},p.slots[1].strokes,3);
+  assert.ok(rhythm.length>2);assert.ok(rhythm.every(e=>e.midi===null));
 });

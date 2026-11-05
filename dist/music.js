@@ -6,7 +6,9 @@ export const INSTRUMENTS=[
   {id:'maracas',name:'마라카스',pitched:false,hint:'사각사각, 흔들어요',icon:'✦'},
   {id:'xylophone',name:'실로폰',pitched:true,hint:'통통, 맑고 짧게',icon:'▥'},
   {id:'bell',name:'종소리',pitched:true,hint:'딩동, 은은하게',icon:'🔔'},
-  {id:'drum',name:'북',pitched:false,hint:'둥둥, 힘차게',icon:'🥁'}
+  {id:'drum',name:'북',pitched:false,hint:'둥둥, 힘차게',icon:'🥁'},
+  {id:'violin',name:'바이올린',pitched:true,hint:'활로 켜는 현악기',icon:'🎻'},
+  {id:'tambourine',name:'탬버린',pitched:false,hint:'찰랑찰랑, 리듬을 쳐요',icon:'◉'}
 ];
 export const NOTES=[{id:'C',name:'도'},{id:'D',name:'레'},{id:'E',name:'미'},{id:'F',name:'파'},{id:'G',name:'솔'},{id:'A',name:'라'},{id:'B',name:'시'}];
 export const OCTAVES=[{id:3,name:'낮은음'},{id:4,name:'보통음'},{id:5,name:'높은음'}];
